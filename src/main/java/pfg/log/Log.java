@@ -48,7 +48,7 @@ public class Log
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		useConfig(new Config(ConfigInfoLog.values(), true, configFilename, configprofile));
+		useConfig(new Config(ConfigInfoLog.values(), false, configFilename, configprofile));
 	}
 	
 	public synchronized void write(String message, LogCategory categorie)
