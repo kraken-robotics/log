@@ -1,22 +1,18 @@
 /*
- * Copyright (C) 2013-2017 Pierre-François Gimenez
+ * Copyright (C) 2013-2018% Pierre-François Gimenez
  * Distributed under the MIT License.
  */
 
 package pfg.log;
 
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import pfg.config.Config;
 
 /**
- * Service de log, affiche à l'écran des informations avec différents niveaux de
- * couleurs
+ * Service de log
  * 
  * @author pf
  *
@@ -38,17 +34,28 @@ public class Log
 	 * date du démarrage
 	 */
 	private static final long dateInitiale = System.currentTimeMillis();
-	private long dateDebutMatch = -1;
 	
 	public Log(Severity defaultSeverity, String configFilename, String... configprofile)
 	{
 		this.defaultSeverity = defaultSeverity;
-		try {
-			Runtime.getRuntime().exec("rm logs/last.txt");
-		} catch (IOException e) {
-			e.printStackTrace();
+		
+		Config config = new Config(ConfigInfoLog.values(), false, configFilename, configprofile);
+		fastLog = config.getBoolean(ConfigInfoLog.FAST_LOG);
+		stdoutLog = config.getBoolean(ConfigInfoLog.STDOUT_LOG);
+		file = config.getString(ConfigInfoLog.SAVE_FILE);
+
+		if(!file.isEmpty())
+		{
+			Runtime.getRuntime().addShutdownHook(new ThreadCloseOnShutdown(this));
+			try
+			{
+				writer = new BufferedWriter(new FileWriter(file));
+			}
+			catch(IOException e)
+			{
+				System.err.println("Erreur lors de la création du fichier : " + e);
+			}
 		}
-		useConfig(new Config(ConfigInfoLog.values(), false, configFilename, configprofile));
 	}
 	
 	public synchronized void write(String message, LogCategory categorie)
@@ -85,17 +92,14 @@ public class Log
 		if(!logClosed)
 		{
 			long date = System.currentTimeMillis() - dateInitiale;
-			String tempsMatch = "";
-			if(dateDebutMatch != -1)
-				tempsMatch = " T+" + (System.currentTimeMillis() - dateDebutMatch);
 
 			String affichage;
 			if(fastLog)
-				affichage = date + tempsMatch + " > " + message;
+				affichage = date + " > " + message;
 			else
 			{
 				StackTraceElement elem = Thread.currentThread().getStackTrace()[3];
-				affichage = date + tempsMatch + " "+ niveau + " " + elem.getClassName().substring(elem.getClassName().lastIndexOf(".") + 1) + ":" + elem.getLineNumber() + " (" + Thread.currentThread().getName() + ") > " + message;
+				affichage = date + " "+ niveau + " " + elem.getClassName().substring(elem.getClassName().lastIndexOf(".") + 1) + ":" + elem.getLineNumber() + " (" + Thread.currentThread().getName() + ") > " + message;
 			}
 
 			if(stdoutLog)
@@ -127,7 +131,6 @@ public class Log
 				{
 					writer.flush();
 					writer.close();
-					Runtime.getRuntime().exec("cp "+file+" logs/last.txt");
 				}
 			}
 			catch(IOException e)
@@ -137,53 +140,7 @@ public class Log
 		}
 		logClosed = true;
 	}
-
-	private void useConfig(Config config)
-	{
-		fastLog = config.getBoolean(ConfigInfoLog.FAST_LOG);
-		stdoutLog = config.getBoolean(ConfigInfoLog.STDOUT_LOG);
-		save = config.getBoolean(ConfigInfoLog.SAVE_LOG);
-
-		if(save)
-		{
-			Runtime.getRuntime().addShutdownHook(new ThreadCloseOnShutdown(this));
-			file = "logs/" + new SimpleDateFormat("dd-MM.HH:mm").format(new Date()) + ".txt";
-			try
-			{
-				writer = new BufferedWriter(new FileWriter(file));
-			}
-			catch(FileNotFoundException e)
-			{
-				try
-				{
-					Runtime.getRuntime().exec("mkdir logs");
-					try
-					{
-						Thread.sleep(50);
-					}
-					catch(InterruptedException e1)
-					{
-						e1.printStackTrace();
-					}
-					writer = new BufferedWriter(new FileWriter(file));
-				}
-				catch(IOException e1)
-				{
-					System.err.println("Erreur (1) lors de la création du fichier : " + e1);
-				}
-			}
-			catch(IOException e)
-			{
-				System.err.println("Erreur (2) lors de la création du fichier : " + e);
-			}
-		}
-	}
 	
-	public void setInitTime(long date)
-	{
-		dateDebutMatch = date;
-	}
-
 	public PrintWriter getPrintWriter()
 	{
 		return new PrintWriter(writer);

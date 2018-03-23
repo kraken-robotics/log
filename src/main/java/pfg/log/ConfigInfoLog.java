@@ -21,10 +21,9 @@ import pfg.config.ConfigInfo;
 
 public enum ConfigInfoLog implements ConfigInfo
 {
-	ENABLE_CONSOLE(true), // enable the console
-	SAVE_LOG(false), // save the log into a log file
+	SAVE_FILE(""), // save the log into a log file
 	FAST_LOG(false), // log rapide, sans reflection
-	STDOUT_LOG(false); // log into the stdout
+	STDOUT_LOG(true); // log into the stdout
 
 	private Object defaultValue;
 	public volatile boolean uptodate;
