@@ -42,6 +42,16 @@
 		</developer>
 	</developers>
 
+<repositories>
+    <repository>
+        <id>config-pfg-mvn-repo</id>
+        <url>https://raw.githubusercontent.com/PFGimenez/config/mvn-repo/</url>
+        <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+        </snapshots>
+    </repository>
+</repositories>
 
 <distributionManagement>
     <repository>
