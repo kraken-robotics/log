@@ -12,4 +12,6 @@ package pfg.log;
  */
 
 public interface Severity
-{}
+{
+	public boolean alwaysPrint();
+}
