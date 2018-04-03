@@ -13,5 +13,6 @@ package pfg.log;
 
 public interface LogCategory
 {
+	public boolean shouldPrint();
 	public int getMask();
 }

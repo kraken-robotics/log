@@ -102,7 +102,7 @@ public class Log
 				affichage = date + " "+ niveau + " " + elem.getClassName().substring(elem.getClassName().lastIndexOf(".") + 1) + ":" + elem.getLineNumber() + " (" + Thread.currentThread().getName() + ") > " + message;
 			}
 
-			if(stdoutLog)
+			if(stdoutLog && categorie.shouldPrint())
 				System.out.println(affichage);
 			if(writer != null)
 			{
