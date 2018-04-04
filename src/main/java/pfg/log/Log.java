@@ -8,7 +8,6 @@ package pfg.log;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import pfg.config.Config;
 
 /**
@@ -139,11 +138,6 @@ public class Log
 			}
 		}
 		logClosed = true;
-	}
-	
-	public PrintWriter getPrintWriter()
-	{
-		return new PrintWriter(writer);
 	}
 
 	public class ThreadCloseOnShutdown extends Thread
