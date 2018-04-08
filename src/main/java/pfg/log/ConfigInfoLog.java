@@ -21,7 +21,7 @@ import pfg.config.ConfigInfo;
 
 public enum ConfigInfoLog implements ConfigInfo
 {
-	SAVE_FILE(""), // save the log into a log file
+	SAVE_LOG(false), // save the log into a log file
 	FAST_LOG(false), // log rapide, sans reflection
 	STDOUT_LOG(true); // log into the stdout
 

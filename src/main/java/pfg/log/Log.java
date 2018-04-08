@@ -19,9 +19,11 @@ import pfg.config.Config;
 
 public class Log
 {
-	private boolean logClosed = false;
-	private BufferedWriter writer = null;
-	private String file;
+	private static volatile boolean logClosed = false;
+	private static BufferedWriter writer = null;
+	private static int totalInstancesNb = 0;
+	private int instanceNb;
+	private String name;
 	private boolean save;
 
 	// Ecriture plus rapide sans appel à la pile d'exécution
@@ -41,14 +43,16 @@ public class Log
 		Config config = new Config(ConfigInfoLog.values(), false, configFilename, configprofile);
 		fastLog = config.getBoolean(ConfigInfoLog.FAST_LOG);
 		stdoutLog = config.getBoolean(ConfigInfoLog.STDOUT_LOG);
-		file = config.getString(ConfigInfoLog.SAVE_FILE);
-
-		if(!file.isEmpty())
+		save = config.getBoolean(ConfigInfoLog.SAVE_LOG);
+		instanceNb = totalInstancesNb++;
+		StackTraceElement elem = Thread.currentThread().getStackTrace()[2];
+		name = elem.getClassName().substring(elem.getClassName().lastIndexOf(".") + 1);
+		if(save && writer == null)
 		{
 			Runtime.getRuntime().addShutdownHook(new ThreadCloseOnShutdown(this));
 			try
 			{
-				writer = new BufferedWriter(new FileWriter(file));
+				writer = new BufferedWriter(new FileWriter("last.txt"));
 			}
 			catch(IOException e)
 			{
@@ -57,22 +61,22 @@ public class Log
 		}
 	}
 	
-	public synchronized void write(String message, LogCategory categorie)
+	public void write(String message, LogCategory categorie)
 	{
 		write_(message, defaultSeverity, categorie);
 	}
 
-	public synchronized void write(Object message, LogCategory categorie)
+	public void write(Object message, LogCategory categorie)
 	{
 		write_(message == null ? "null" : message.toString(), defaultSeverity, categorie);
 	}
 
-	public synchronized void write(Object message, Severity niveau, LogCategory categorie)
+	public void write(Object message, Severity niveau, LogCategory categorie)
 	{
 		write_(message == null ? "null" : message.toString(), niveau, categorie);
 	}
 	
-	public synchronized void write(String message, Severity niveau, LogCategory categorie)
+	public void write(String message, Severity niveau, LogCategory categorie)
 	{
 		write_(message, niveau, categorie);
 	}
@@ -86,32 +90,35 @@ public class Log
 	 * @param couleur
 	 * @param ou
 	 */
-	private synchronized void write_(String message, Severity niveau, LogCategory categorie)
+	private void write_(String message, Severity niveau, LogCategory categorie)
 	{
-		if(!logClosed)
+		synchronized(Log.class)
 		{
-			long date = System.currentTimeMillis() - dateInitiale;
-
-			String affichage;
-			if(fastLog)
-				affichage = date + " > " + message;
-			else
+			if(!logClosed)
 			{
-				StackTraceElement elem = Thread.currentThread().getStackTrace()[3];
-				affichage = date + " "+ niveau + " " + elem.getClassName().substring(elem.getClassName().lastIndexOf(".") + 1) + ":" + elem.getLineNumber() + " (" + Thread.currentThread().getName() + ") > " + message;
-			}
-
-			if(stdoutLog && (categorie.shouldPrint() || niveau.alwaysPrint()))
-				System.out.println(affichage);
-			if(writer != null)
-			{
-				try
+				long date = System.currentTimeMillis() - dateInitiale;
+	
+				String affichage;
+				if(fastLog)
+					affichage = date + " > " + message;
+				else
 				{
-					writer.write(categorie.getMask() + " " + affichage + "\n");
+					StackTraceElement elem = Thread.currentThread().getStackTrace()[3];
+					affichage = date + " "+ niveau + " " + elem.getClassName().substring(elem.getClassName().lastIndexOf(".") + 1) + ":" + elem.getLineNumber() + " (" + Thread.currentThread().getName() + ") > " + message;
 				}
-				catch(IOException e)
+	
+				if(stdoutLog && (categorie.shouldPrint() || niveau.alwaysPrint()))
+					System.out.println(affichage);
+				if(save)
 				{
-					e.printStackTrace();
+					try
+					{
+						writer.write(name + " " +instanceNb + " " + categorie.getMask() + " " + affichage + "\n");
+					}
+					catch(IOException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -122,15 +129,15 @@ public class Log
 	 */
 	private void close()
 	{
-		if(!logClosed && save)
+		assert logClosed;
+		assert writer != null;
+		if(!logClosed && writer != null)
 		{
+			System.out.println("Sauvegarde du log");
 			try
 			{
-				if(writer != null)
-				{
-					writer.flush();
-					writer.close();
-				}
+				writer.flush();
+				writer.close();
 			}
 			catch(IOException e)
 			{
