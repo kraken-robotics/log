@@ -46,10 +46,6 @@
     <repository>
         <id>config-pfg-mvn-repo</id>
         <url>https://raw.githubusercontent.com/PFGimenez/config/mvn-repo/</url>
-        <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-        </snapshots>
     </repository>
 </repositories>
 
@@ -107,19 +103,7 @@
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-source-plugin</artifactId>
-      <executions>
-        <execution>
-          <id>attach-sources</id>
-          <goals>
-            <goal>jar</goal>
-          </goals>
-        </execution>
-      </executions>
-  </plugin>
-
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-source-plugin</artifactId>
+      <version>3.0.1</version>
       <executions>
         <execution>
           <id>attach-javadocs</id>
@@ -127,7 +111,13 @@
             <goal>jar</goal>
           </goals>
         </execution>
-      </executions>
+         <execution>
+          <id>attach-sources</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+     </executions>
     </plugin>
 
 
