@@ -2,12 +2,18 @@
 
 ## Maven installation
 
-If you want to use this library in one of your maven project, add this to your pom.xml :
+If you want to use this library in one of your maven project, add this to your `pom.xml`:
 
     <repositories>
         <repository>
-            <id>log-pfg-mvn-repo</id>
-            <url>https://raw.githubusercontent.com/PFGimenez/log/mvn-repo/</url>
+            <id>PFGimenez-Kraken</id>
+            <url>https://packagecloud.io/PFGimenez/Kraken/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -21,9 +27,7 @@ and
 
 
 
-## Manual compilation
-
-[![Build Status](https://travis-ci.org/PFGimenez/log.svg?branch=master)](https://travis-ci.org/PFGimenez/log)
+## Manual compilation [![Build Status](https://travis-ci.org/PFGimenez/log.svg?branch=master)](https://travis-ci.org/PFGimenez/log)
 
 You can compile it yourself. You will need a JDK and maven.
 
