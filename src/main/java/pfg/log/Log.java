@@ -129,7 +129,7 @@ public class Log
 	 */
 	private void close()
 	{
-		assert logClosed;
+		assert !logClosed;
 		assert writer != null;
 		if(!logClosed && writer != null)
 		{
