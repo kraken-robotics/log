@@ -20,7 +20,7 @@ import pfg.config.Config;
 public class Log
 {
 	private static volatile boolean logClosed = false;
-	private static BufferedWriter writer = null;
+	private static volatile BufferedWriter writer = null;
 	private static int totalInstancesNb = 0;
 	private int instanceNb;
 	private String name;
