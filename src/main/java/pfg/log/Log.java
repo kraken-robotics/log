@@ -100,11 +100,11 @@ public class Log
 	
 				String affichage;
 				if(fastLog)
-					affichage = date + " > " + message;
+					affichage = date + " "+ niveau + " " + categorie + " > " + message;
 				else
 				{
 					StackTraceElement elem = Thread.currentThread().getStackTrace()[3];
-					affichage = date + " "+ niveau + " " + elem.getClassName().substring(elem.getClassName().lastIndexOf(".") + 1) + ":" + elem.getLineNumber() + " (" + Thread.currentThread().getName() + ") > " + message;
+					affichage = date + " "+ niveau + " " + categorie + " " + elem.getClassName().substring(elem.getClassName().lastIndexOf(".") + 1) + ":" + elem.getLineNumber() + " (" + Thread.currentThread().getName() + ") > " + message;
 				}
 	
 				if(stdoutLog && (categorie.shouldPrint() || niveau.alwaysPrint()))
