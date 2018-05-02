@@ -25,6 +25,7 @@ public class Log
 	private int instanceNb;
 	private String name;
 	private boolean save;
+	private Config config;
 
 	// Ecriture plus rapide sans appel à la pile d'exécution
 	private boolean fastLog = false;
@@ -40,7 +41,7 @@ public class Log
 	{
 		this.defaultSeverity = defaultSeverity;
 		
-		Config config = new Config(ConfigInfoLog.values(), false, configFilename, configprofile);
+		config = new Config(ConfigInfoLog.values(), false, configFilename, configprofile);
 		fastLog = config.getBoolean(ConfigInfoLog.FAST_LOG);
 		stdoutLog = config.getBoolean(ConfigInfoLog.STDOUT_LOG);
 		save = config.getBoolean(ConfigInfoLog.SAVE_LOG);
@@ -162,5 +163,9 @@ public class Log
 			Thread.currentThread().setName(getClass().getSimpleName());
 			log.close();
 		}
+	}
+
+	public void displayOverriddenConfigValues() {
+		config.printChangedValues();
 	}
 }
