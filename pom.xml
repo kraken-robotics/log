@@ -42,19 +42,20 @@
 		</developer>
 	</developers>
 
-    <repositories>
+      <repositories>
         <repository>
-            <id>PFGimenez-Kraken</id>
-            <url>https://packagecloud.io/PFGimenez/Kraken/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
         </repository>
-    </repositories>
-    
+        <repository>
+          <id>github</id>
+          <url>https://maven.pkg.github.com/kraken-robotics/*</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+
     <distributionManagement>
    <repository>
      <id>github</id>
