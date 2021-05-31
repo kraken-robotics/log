@@ -54,20 +54,13 @@
             </snapshots>
         </repository>
     </repositories>
-
-<distributionManagement>
-  <repository>
-    <id>packagecloud-travis</id>
-    <url>
-        packagecloud+https://packagecloud.io/PFGimenez/Kraken
-    </url>
-  </repository>
-  <snapshotRepository>
-    <id>packagecloud-travis</id>
-    <url>
-        packagecloud+https://packagecloud.io/PFGimenez/Kraken
-    </url>
-  </snapshotRepository>
+    
+    <distributionManagement>
+   <repository>
+     <id>github</id>
+     <name>GitHub Kraken-robotics Apache Maven Packages</name>
+     <url>https://maven.pkg.github.com/kraken-robotics/log</url>
+   </repository>
 </distributionManagement>
 
   <dependencies>
@@ -91,13 +84,6 @@
         </configuration>
     </plugin>
       </plugins>
-    <extensions>
-    <extension>
-      <groupId>io.packagecloud.maven.wagon</groupId>
-      <artifactId>maven-packagecloud-wagon</artifactId>
-      <version>0.0.6</version>
-    </extension>
-</extensions>
   </build>
 
 </project>
